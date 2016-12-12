@@ -19,12 +19,12 @@ end
 
 class TestFixture
     def initialize
-
     end
 
     def run
-        self.methods.grep(/test/).each do |method|
-            self.send(method.to_sym)
+        self.methods.grep(/test_/).each do |method|
+            set_up
+            self.send(method, method.to_s)
         end
     end
 
@@ -32,21 +32,18 @@ class TestFixture
         @board = Board.new
     end
 
-    def test_a_new_board_should_be_empty
-        set_up
-        assert_equal(@board.isEmpty?, true, "A new board should be empty")
+    def test_a_new_board_should_be_empty(message)
+        assert_equal(@board.isEmpty?, true, format_test_name(message))
     end
 
-    def test_a_board_should_not_be_empty_after_a_player_has_placed_a_piece
-        set_up
+    def test_a_board_should_not_be_empty_after_a_player_has_placed_a_piece(message)
         @board.place_piece_at("X",0,0)
-        assert_equal(@board.isEmpty?, false, "A board should not be empty after a player has placed a piece")
+        assert_equal(@board.isEmpty?, false, format_test_name(message))
     end
 
-    def test_after_a_player_has_placed_an_X_at_0_0_the_board_should_have_an_X_X_at_0_0
-        set_up
+    def test_after_a_player_has_placed_an_X_at_0_0_the_board_should_have_an_X_X_at_0_0(message)
         @board.place_piece_at(0,0,"X")
-        assert_equal(@board.piece_at(0,0), "X", "After a player has placed an X at 0,0, the board should have an X and 0,0")
+        assert_equal(@board.piece_at(0,0), "X", format_test_name(message))
     end
 
     def assert_equal(actual, expected, test_message)
@@ -56,6 +53,12 @@ class TestFixture
         elsif
             puts "/ " + test_message
         end
+    end
+
+    def format_test_name(message)
+        message_with_underscores = message.gsub!("_", " ")
+        message_without_test = message_with_underscores.sub(/test /, "")
+        return message_without_test.capitalize
     end
 end
 
